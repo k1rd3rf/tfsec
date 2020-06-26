@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 )
 
 type checkstyleResult struct {
