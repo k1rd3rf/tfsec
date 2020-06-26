@@ -1,4 +1,4 @@
-module github.com/liamg/tfsec
+module github.com/k1rd3rf/tfsec
 
 require (
 	cloud.google.com/go v0.47.0 // indirect
