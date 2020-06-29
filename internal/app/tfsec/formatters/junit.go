@@ -15,19 +15,19 @@ import (
 // JUnitTestSuite is a single JUnit test suite which may contain many
 // testcases.
 type JUnitTestSuite struct {
-	XMLName    xml.Name        `xml:"testsuite"`
-	Name       string          `xml:"name,attr"`
-	Failures   string          `xml:"failures,attr"`
-	TestCases  []JUnitTestCase `xml:"testcase"`
+	XMLName   xml.Name        `xml:"testsuite"`
+	Name      string          `xml:"name,attr"`
+	Failures  string          `xml:"failures,attr"`
+	TestCases []JUnitTestCase `xml:"testcase"`
 }
 
 // JUnitTestCase is a single test case with its result.
 type JUnitTestCase struct {
-	XMLName     xml.Name          `xml:"testcase"`
-	Classname   string            `xml:"classname,attr"`
-	Name        string            `xml:"name,attr"`
-	Time        string            `xml:"time,attr"`
-	Failure     *JUnitFailure     `xml:"failure,omitempty"`
+	XMLName   xml.Name      `xml:"testcase"`
+	Classname string        `xml:"classname,attr"`
+	Name      string        `xml:"name,attr"`
+	Time      string        `xml:"time,attr"`
+	Failure   *JUnitFailure `xml:"failure,omitempty"`
 }
 
 // JUnitFailure contains data related to a failed test.
@@ -39,21 +39,20 @@ type JUnitFailure struct {
 
 func FormatJUnit(results []scanner.Result) error {
 
-	output := JUnitTestSuite {
-		Name:"tfsec",
-		Failures:fmt.Sprintf("[%d]", len(results)),
+	output := JUnitTestSuite{
+		Name:     "tfsec",
+		Failures: fmt.Sprintf("%d", len(results)),
 	}
 
 	for _, result := range results {
 		output.TestCases = append(output.TestCases,
-			JUnitTestCase  {
+			JUnitTestCase{
 				Classname: result.Range.Filename,
-				Name: fmt.Sprintf("[%s][%s]", result.RuleID, result.Severity),
-				Time: "0",
-				Failure:
-				&JUnitFailure {
+				Name:      fmt.Sprintf("[%s][%s]", result.RuleID, result.Severity),
+				Time:      "0",
+				Failure: &JUnitFailure{
 					Message: result.Description,
-					Contents:  fmt.Sprintf("%s\n%s\nMore information: %s",
+					Contents: fmt.Sprintf("%s\n%s\nMore information: %s",
 						result.Range.String(),
 						highlightCodeJunit(result),
 						result.Link),
@@ -91,7 +90,7 @@ func highlightCodeJunit(result scanner.Result) string {
 		end = len(lines) - 1
 	}
 
-	output:=""
+	output := ""
 
 	for lineNo := start; lineNo <= end; lineNo++ {
 		output += fmt.Sprintf("  % 6d | ", lineNo)
@@ -99,10 +98,10 @@ func highlightCodeJunit(result scanner.Result) string {
 			if lineNo == result.Range.StartLine && result.RangeAnnotation != "" {
 				output += fmt.Sprintf("%    %s\n", lines[lineNo], result.RangeAnnotation)
 			} else {
-				output +=  fmt.Sprintf("%s\n", lines[lineNo])
+				output += fmt.Sprintf("%s\n", lines[lineNo])
 			}
 		} else {
-			output +=  fmt.Sprintf("%s\n", lines[lineNo])
+			output += fmt.Sprintf("%s\n", lines[lineNo])
 		}
 	}
 
