@@ -101,7 +101,7 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
-		blocks, err := parser.New().ParseDirectory(dir, absoluteExcludes, tfvarsPath)
+		blocks, err := parser.New().ParseDirectory(dir)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
