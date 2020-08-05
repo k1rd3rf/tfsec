@@ -37,7 +37,7 @@ You can also grab the binary for your system from the [releases page](https://gi
 Alternatively, install with Go:
 
 ```bash
-env GO111MODULE=on go get -u github.com/liamg/tfsec/cmd/tfsec
+go get -u github.com/liamg/tfsec/cmd/tfsec
 ```
 
 ## Usage
@@ -57,16 +57,10 @@ tfsec .
 As an alternative to installing and running tfsec on your system, you may
 run tfsec in a Docker container.
 
-To build:
-
-```bash
-docker build -t tfsec .
-```
-
 To run:
 
 ```bash
-docker run --rm -it -v "$(pwd):/workdir" tfsec .
+docker run --rm -it -v "$(pwd):/src" liamg/tfsec /src
 ```
 
 ## Use as GitHub Action
@@ -79,6 +73,7 @@ If you want to run tfsec on your repository as a GitHub Action, you can use [htt
 - Checks for violations of AWS, Azure and GCP security best practice recommendations
 - Scans modules (currently only local modules are supported)
 - Evaluates expressions as well as literal values
+- Evaluates Terraform functions e.g. `concat()`
 
 ## Ignoring Warnings
 
@@ -118,6 +113,14 @@ simply add new argument `-e CHECK1,CHECK2,etc` to your cmd command
 ```bash
 tfsec . -e GEN001,GCP001,GCP002
 ```
+
+## Including values from .tfvars
+
+You can include values from a tfvars file in the scan,  using, for example: `--tfvars-file terraform.tfvars`.
+
+## Excluding Directories
+
+You can exclude directories from being scanned using the `--exclude-dir [directory]` flag. This can be used multiple times to exclude multiple directories.
 
 ## Included Checks
 
@@ -163,6 +166,11 @@ there are also checks which are provider agnostic.
 | GCP003  | google   | An inbound firewall rule allows traffic from `/0`.
 | GCP004  | google   | An outbound firewall rule allows traffic to `/0`.
 | GCP005  | google   | Legacy ABAC permissions are enabled.
+| GCP006  | google   | Node metadata value disables metadata concealment.
+| GCP007  | google   | Legacy metadata endpoints enabled.
+| GCP008  | google   | Legacy client authentication methods utilized.
+| GCP009  | google   | Pod security policy enforcement not defined.
+| GCP010  | google   | Shielded GKE nodes not enabled.
 
 ## Running in CI
 
@@ -174,7 +182,7 @@ American friends).
 
 ## Output options
 
-You can output tfsec results as JSON, CSV, Checkstyle, JUnit or just plain old human readable format. Use the `--format` flag 
+You can output tfsec results as JSON, CSV, Checkstyle, JUnit or just plain old human readable format. Use the `--format` flag
 to specify your desired format.
 
 ## Support for older terraform versions

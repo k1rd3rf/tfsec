@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/hashicorp/hcl/v2/hclsyntax"
+
 	"github.com/zclconf/go-cty/cty"
 
 	"github.com/hashicorp/hcl/v2"
@@ -28,10 +30,39 @@ func New() *Parser {
 	}
 }
 
-// ParseDirectory recursively parses all terraform files within a given directory
-func (parser *Parser) ParseDirectory(path string) (Blocks, error) {
+type ParseResult struct {
+	Blocks
+	cty.Value
+}
 
-	if err := parser.recursivelyParseDirectory(path, newPathBreaker(path)); err != nil {
+func (parser *Parser) readTFVars(filename string) (map[string]cty.Value, error) {
+
+	inputVars := make(map[string]cty.Value)
+
+	if filename == "" {
+		return inputVars, nil
+	}
+
+	src, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	tfvars, _ := hclsyntax.ParseConfig(src, filename, hcl.Pos{Line: 1, Column: 1})
+	attrs, _ := tfvars.Body.JustAttributes()
+
+	for _, attr := range attrs {
+		inputVars[attr.Name], _ = attr.Expr.Value(&hcl.EvalContext{})
+	}
+
+	return inputVars, nil
+}
+
+// ParseDirectory recursively parses all terraform files within a given directory
+func (parser *Parser) ParseDirectory(path string, excludedDirectories []string, tfvarsPath string) (Blocks, error) {
+
+	parseCache := newParseCache()
+	if err := parser.recursivelyParseDirectory(path, parseCache, excludedDirectories); err != nil {
 		return nil, err
 	}
 
@@ -45,7 +76,11 @@ func (parser *Parser) ParseDirectory(path string) (Blocks, error) {
 		blocks = append(blocks, fileBlocks...)
 	}
 
-	inputVars := make(map[string]cty.Value)
+	inputVars, err := parser.readTFVars(tfvarsPath)
+	if err != nil {
+		return nil, err
+	}
+
 	// TODO add .tfvars values to inputVars
 
 	allBlocks, _ := parser.buildEvaluationContext(
@@ -53,7 +88,8 @@ func (parser *Parser) ParseDirectory(path string) (Blocks, error) {
 		path,
 		inputVars,
 		true,
-		newPathBreaker(path),
+		parseCache,
+		excludedDirectories,
 	)
 	return allBlocks.RemoveDuplicates(), nil
 }
@@ -72,13 +108,13 @@ func (parser *Parser) parseFile(file *hcl.File) (hcl.Blocks, error) {
 	return contents.Blocks, nil
 }
 
-func (parser *Parser) recursivelyParseDirectory(path string, pb pathBreaker) error {
+func (parser *Parser) recursivelyParseDirectory(path string, pc parseCache, excludedDirectories []string) error {
 
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return err
 	}
-
+FILE:
 	for _, file := range files {
 		if strings.HasPrefix(file.Name(), ".") { //ignore dotfiles (including .terraform!)
 			continue
@@ -90,14 +126,21 @@ func (parser *Parser) recursivelyParseDirectory(path string, pb pathBreaker) err
 
 		parser.files[fullPath] = true
 		if file.IsDir() {
+
+			for _, excluded := range excludedDirectories {
+				if fullPath == excluded {
+					continue FILE
+				}
+			}
+
 			// We want local files to be loaded as needed by modules, but
 			// we want to defend against directories being loaded multiple times.
-			if pb.hasSeen(fullPath) {
+			if pc.hasSeenPath(fullPath) {
 				continue
 			}
-			pb.add(fullPath)
+			pc.addPath(fullPath)
 
-			if err := parser.recursivelyParseDirectory(fullPath, pb); err != nil {
+			if err := parser.recursivelyParseDirectory(fullPath, pc, excludedDirectories); err != nil {
 				return err
 			}
 		} else if strings.HasSuffix(file.Name(), ".tf") {
@@ -117,10 +160,12 @@ func (parser *Parser) buildEvaluationContext(
 	path string,
 	inputVars map[string]cty.Value,
 	isRoot bool,
-	pb pathBreaker,
+	pc parseCache,
+	excludedDirectories []string,
 ) (Blocks, *hcl.EvalContext) {
 	ctx := &hcl.EvalContext{
 		Variables: make(map[string]cty.Value),
+		Functions: Functions(path),
 	}
 
 	ctx.Variables["module"] = cty.ObjectVal(make(map[string]cty.Value))
@@ -157,7 +202,7 @@ func (parser *Parser) buildEvaluationContext(
 			}
 			moduleName := moduleBlock.Labels[0]
 
-			moduleBlocks[moduleName], moduleMap[moduleName] = parser.parseModuleBlock(moduleBlock, ctx, path, pb) // todo return parsed blocks here too
+			moduleBlocks[moduleName], moduleMap[moduleName] = parser.parseModuleBlock(moduleBlock, ctx, path, pc, excludedDirectories) // todo return parsed blocks here too
 			ctx.Variables["module"] = cty.ObjectVal(moduleMap)
 		}
 
@@ -183,7 +228,8 @@ func (parser *Parser) parseModuleBlock(
 	block *hcl.Block,
 	parentContext *hcl.EvalContext,
 	rootPath string,
-	pb pathBreaker,
+	pc parseCache,
+	excludedDirectories []string,
 ) (Blocks, cty.Value) {
 
 	if len(block.Labels) == 0 {
@@ -216,6 +262,9 @@ func (parser *Parser) parseModuleBlock(
 	}
 
 	path := filepath.Join(rootPath, source)
+	if result, ok := pc.lookupResult(path); ok {
+		return result.Blocks, result.Value
+	}
 
 	// We need to respect the module's path if it's local to the filesystem.
 	// If the `rootPath` != `modulePath` then this means that we're not
@@ -229,7 +278,7 @@ func (parser *Parser) parseModuleBlock(
 
 	subParser := New()
 
-	if err := subParser.recursivelyParseDirectory(path, pb); err != nil {
+	if err := subParser.recursivelyParseDirectory(path, pc, excludedDirectories); err != nil {
 		return nil, cty.NilVal
 	}
 
@@ -243,9 +292,14 @@ func (parser *Parser) parseModuleBlock(
 		blocks = append(blocks, fileBlocks...)
 	}
 
-	childModules, ctx := subParser.buildEvaluationContext(blocks, path, inputVars, false, pb)
+	childModules, ctx := subParser.buildEvaluationContext(blocks, path, inputVars, false, pc, excludedDirectories)
+	parseResult := ParseResult{
+		Blocks: childModules.RemoveDuplicates(),
+		Value:  cty.ObjectVal(ctx.Variables),
+	}
 
-	return childModules, cty.ObjectVal(ctx.Variables)
+	pc.storeResult(path, parseResult)
+	return parseResult.Blocks, parseResult.Value
 }
 
 // returns true if all evaluations were successful
@@ -338,22 +392,35 @@ func (parser *Parser) getValuesByBlockType(ctx *hcl.EvalContext, blocks hcl.Bloc
 // pathBreaker is a set of known paths to allow us to implement circuit breaking
 // so that we can defend against infinity recursion in specific module
 // sourcing circumstances.
-type pathBreaker map[string]struct{}
 
-// newPathBreaker creates a new path breaker based on the given original path.
-func newPathBreaker(original string) pathBreaker {
-	return map[string]struct{}{
-		original: struct{}{},
+type parseCache struct {
+	visitedPaths map[string]struct{}
+	results      map[string]ParseResult
+}
+
+func newParseCache() parseCache {
+	return parseCache{
+		visitedPaths: make(map[string]struct{}),
+		results:      make(map[string]ParseResult),
 	}
 }
 
 // add adds a new, now, known path to our path circuit breaker.
-func (p pathBreaker) add(path string) {
-	p[path] = struct{}{}
+func (p parseCache) addPath(path string) {
+	p.visitedPaths[path] = struct{}{}
 }
 
 // hasSeen returns a boolean denoting if we've seen the given path before.
-func (p pathBreaker) hasSeen(path string) bool {
-	_, ok := p[path]
+func (p parseCache) hasSeenPath(path string) bool {
+	_, ok := p.visitedPaths[path]
 	return ok
+}
+
+func (p parseCache) lookupResult(fullPath string) (ParseResult, bool) {
+	result, ok := p.results[fullPath]
+	return result, ok
+}
+
+func (p parseCache) storeResult(fullPath string, result ParseResult) {
+	p.results[fullPath] = result
 }
