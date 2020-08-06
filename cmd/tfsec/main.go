@@ -6,14 +6,14 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/formatters"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/formatters"
 
 	"github.com/liamg/tml"
 
-	_ "github.com/liamg/tfsec/internal/app/tfsec/checks"
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
-	"github.com/liamg/tfsec/version"
+	_ "github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/parser"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/version"
 	"github.com/spf13/cobra"
 )
 

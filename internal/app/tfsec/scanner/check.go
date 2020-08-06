@@ -6,7 +6,7 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/parser"
 )
 
 // RuleID is a unique identifier for a check

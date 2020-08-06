@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 )
 
 // see https://github.com/windyroad/JUnit-Schema/blob/master/JUnit.xsd
@@ -15,20 +15,20 @@ import (
 // JUnitTestSuite is a single JUnit test suite which may contain many
 // testcases.
 type JUnitTestSuite struct {
-	XMLName    xml.Name        `xml:"testsuite"`
-	Name       string          `xml:"name,attr"`
-	Failures   string          `xml:"failures,attr"`
-	Tests      string          `xml:"tests,attr"`
-	TestCases  []JUnitTestCase `xml:"testcase"`
+	XMLName   xml.Name        `xml:"testsuite"`
+	Name      string          `xml:"name,attr"`
+	Failures  string          `xml:"failures,attr"`
+	Tests     string          `xml:"tests,attr"`
+	TestCases []JUnitTestCase `xml:"testcase"`
 }
 
 // JUnitTestCase is a single test case with its result.
 type JUnitTestCase struct {
-	XMLName     xml.Name          `xml:"testcase"`
-	Classname   string            `xml:"classname,attr"`
-	Name        string            `xml:"name,attr"`
-	Time        string            `xml:"time,attr"`
-	Failure     *JUnitFailure     `xml:"failure,omitempty"`
+	XMLName   xml.Name      `xml:"testcase"`
+	Classname string        `xml:"classname,attr"`
+	Name      string        `xml:"name,attr"`
+	Time      string        `xml:"time,attr"`
+	Failure   *JUnitFailure `xml:"failure,omitempty"`
 }
 
 // JUnitFailure contains data related to a failed test.
@@ -40,7 +40,7 @@ type JUnitFailure struct {
 
 func FormatJUnit(results []scanner.Result) error {
 
-	output := JUnitTestSuite {
+	output := JUnitTestSuite{
 		Name:     "tfsec",
 		Failures: fmt.Sprintf("%d", len(results)),
 		Tests:    fmt.Sprintf("%d", len(results)),
@@ -48,14 +48,13 @@ func FormatJUnit(results []scanner.Result) error {
 
 	for _, result := range results {
 		output.TestCases = append(output.TestCases,
-			JUnitTestCase  {
+			JUnitTestCase{
 				Classname: result.Range.Filename,
-				Name: fmt.Sprintf("[%s][%s]", result.RuleID, result.Severity),
-				Time: "0",
-				Failure:
-				&JUnitFailure {
+				Name:      fmt.Sprintf("[%s][%s]", result.RuleID, result.Severity),
+				Time:      "0",
+				Failure: &JUnitFailure{
 					Message: result.Description,
-					Contents:  fmt.Sprintf("%s\n%s\nMore information: %s",
+					Contents: fmt.Sprintf("%s\n%s\nMore information: %s",
 						result.Range.String(),
 						highlightCodeJunit(result),
 						result.Link),
@@ -93,7 +92,7 @@ func highlightCodeJunit(result scanner.Result) string {
 		end = len(lines) - 1
 	}
 
-	output:=""
+	output := ""
 
 	for lineNo := start; lineNo <= end; lineNo++ {
 		output += fmt.Sprintf("  % 6d | ", lineNo)
@@ -101,10 +100,10 @@ func highlightCodeJunit(result scanner.Result) string {
 			if lineNo == result.Range.StartLine && result.RangeAnnotation != "" {
 				output += fmt.Sprintf("%s    %s\n", lines[lineNo], result.RangeAnnotation)
 			} else {
-				output +=  fmt.Sprintf("%s\n", lines[lineNo])
+				output += fmt.Sprintf("%s\n", lines[lineNo])
 			}
 		} else {
-			output +=  fmt.Sprintf("%s\n", lines[lineNo])
+			output += fmt.Sprintf("%s\n", lines[lineNo])
 		}
 	}
 

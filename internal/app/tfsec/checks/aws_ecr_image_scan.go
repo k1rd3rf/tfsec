@@ -5,9 +5,9 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/parser"
 )
 
 // AWSEcrImageScanNotEnabled See https://github.com/liamg/tfsec#included-checks for check info
@@ -23,7 +23,7 @@ func init() {
 			ecrScanStatusBlock := block.GetBlock("image_scanning_configuration")
 			ecrScanStatusAttr := ecrScanStatusBlock.GetAttribute("scan_on_push")
 
-			if ecrScanStatusAttr == nil  {
+			if ecrScanStatusAttr == nil {
 				return []scanner.Result{
 					check.NewResult(
 						fmt.Sprintf("Resource '%s' defines a disabled ECR image scan.", block.Name()),

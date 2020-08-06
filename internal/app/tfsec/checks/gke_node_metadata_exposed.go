@@ -3,9 +3,9 @@ package checks
 import (
 	"fmt"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/parser"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
 	"github.com/zclconf/go-cty/cty"
 )
@@ -22,7 +22,7 @@ func init() {
 
 			nodeMetadata := block.GetBlock("workload_metadata_config").GetAttribute("node_metadata")
 
-      if nodeMetadata.Type() == cty.String && nodeMetadata.Value().AsString() == "EXPOSE" || nodeMetadata.Type() == cty.String && nodeMetadata.Value().AsString() == "UNSPECIFIED" {
+			if nodeMetadata.Type() == cty.String && nodeMetadata.Value().AsString() == "EXPOSE" || nodeMetadata.Type() == cty.String && nodeMetadata.Value().AsString() == "UNSPECIFIED" {
 				return []scanner.Result{
 					check.NewResult(
 						fmt.Sprintf("Resource '%s' defines a cluster with node metadata exposed. node_metadata set to EXPOSE or UNSPECIFIED disables metadata concealment. https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata#create-concealed", block.Name()),
