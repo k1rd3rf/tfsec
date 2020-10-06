@@ -3,15 +3,16 @@ package checks
 import (
 	"fmt"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
+	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
+	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
 )
 
-// AWSOutdatedSSLPolicy See https://github.com/liamg/tfsec#included-checks for check info
+// AWSOutdatedSSLPolicy See https://github.com/tfsec/tfsec#included-checks for check info
 const AWSOutdatedSSLPolicy scanner.RuleID = "AWS010"
+const AWSOutdatedSSLPolicyDescription scanner.RuleDescription = "An outdated SSL policy is in use by a load balancer."
 
 var outdatedSSLPolicies = []string{
 	"ELBSecurityPolicy-2015-05",
@@ -23,6 +24,8 @@ var outdatedSSLPolicies = []string{
 func init() {
 	scanner.RegisterCheck(scanner.Check{
 		Code:           AWSOutdatedSSLPolicy,
+		Description:    AWSOutdatedSSLPolicyDescription,
+		Provider:       scanner.AWSProvider,
 		RequiredTypes:  []string{"resource"},
 		RequiredLabels: []string{"aws_lb_listener", "aws_alb_listener"},
 		CheckFunc: func(check *scanner.Check, block *parser.Block, _ *scanner.Context) []scanner.Result {

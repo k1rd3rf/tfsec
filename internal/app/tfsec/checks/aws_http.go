@@ -3,18 +3,21 @@ package checks
 import (
 	"fmt"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
+	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
+	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
 	"github.com/zclconf/go-cty/cty"
 )
 
-// AWSPlainHTTP See https://github.com/liamg/tfsec#included-checks for check info
+// AWSPlainHTTP See https://github.com/tfsec/tfsec#included-checks for check info
 const AWSPlainHTTP scanner.RuleID = "AWS004"
+const AWSPlainHTTPDescription scanner.RuleDescription = "Use of plain HTTP."
 
 func init() {
 	scanner.RegisterCheck(scanner.Check{
 		Code:           AWSPlainHTTP,
+		Description:    AWSPlainHTTPDescription,
+		Provider:       scanner.AWSProvider,
 		RequiredTypes:  []string{"resource"},
 		RequiredLabels: []string{"aws_lb_listener", "aws_alb_listener"},
 		CheckFunc: func(check *scanner.Check, block *parser.Block, _ *scanner.Context) []scanner.Result {

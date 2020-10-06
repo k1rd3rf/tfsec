@@ -3,19 +3,22 @@ package checks
 import (
 	"fmt"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
+	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
+	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
 )
 
-// AWSLaunchConfigurationWithUnencryptedBlockDevice See https://github.com/liamg/tfsec#included-checks for check info
+// AWSLaunchConfigurationWithUnencryptedBlockDevice See https://github.com/tfsec/tfsec#included-checks for check info
 const AWSLaunchConfigurationWithUnencryptedBlockDevice scanner.RuleID = "AWS014"
+const AWSLaunchConfigurationWithUnencryptedBlockDeviceDescription scanner.RuleDescription = "Launch configuration with unencrypted block device."
 
 func init() {
 	scanner.RegisterCheck(scanner.Check{
 		Code:           AWSLaunchConfigurationWithUnencryptedBlockDevice,
+		Description:    AWSLaunchConfigurationWithUnencryptedBlockDeviceDescription,
+		Provider:       scanner.AWSProvider,
 		RequiredTypes:  []string{"resource"},
 		RequiredLabels: []string{"aws_launch_configuration"},
 		CheckFunc: func(check *scanner.Check, block *parser.Block, context *scanner.Context) []scanner.Result {

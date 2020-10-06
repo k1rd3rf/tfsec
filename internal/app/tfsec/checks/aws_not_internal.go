@@ -3,19 +3,22 @@ package checks
 import (
 	"fmt"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
+	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
+	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
 )
 
-// AWSExternallyExposedLoadBalancer See https://github.com/liamg/tfsec#included-checks for check info
+// AWSExternallyExposedLoadBalancer See https://github.com/tfsec/tfsec#included-checks for check info
 const AWSExternallyExposedLoadBalancer scanner.RuleID = "AWS005"
+const AWSExternallyExposedLoadBalancerDescription scanner.RuleDescription = "Load balancer is exposed to the internet."
 
 func init() {
 	scanner.RegisterCheck(scanner.Check{
 		Code:           AWSExternallyExposedLoadBalancer,
+		Description:    AWSExternallyExposedLoadBalancerDescription,
+		Provider:       scanner.AWSProvider,
 		RequiredTypes:  []string{"resource"},
 		RequiredLabels: []string{"aws_alb", "aws_elb", "aws_lb"},
 		CheckFunc: func(check *scanner.Check, block *parser.Block, _ *scanner.Context) []scanner.Result {

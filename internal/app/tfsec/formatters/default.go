@@ -2,15 +2,16 @@ package formatters
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"strings"
 
 	"github.com/liamg/clinch/terminal"
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
 	"github.com/liamg/tml"
+	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
 )
 
-func FormatDefault(results []scanner.Result) error {
+func FormatDefault(_ io.Writer, results []scanner.Result) error {
 
 	if len(results) == 0 {
 		terminal.PrintSuccessf("\nNo problems detected!\n")

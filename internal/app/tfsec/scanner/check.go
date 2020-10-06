@@ -6,16 +6,27 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
+	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
 )
 
 // RuleID is a unique identifier for a check
 type RuleID string
+type RuleDescription string
+type RuleProvider string
+
+const (
+	AWSProvider     RuleProvider = "aws"
+	AzureProvider   RuleProvider = "azurerm"
+	GCPProvider     RuleProvider = "google"
+	GeneralProvider RuleProvider = "*"
+)
 
 // Check is a targeted security test which can be applied to terraform templates. It includes the types to run on e.g.
 // "resource", and the labels to run on e.g. "aws_s3_bucket".
 type Check struct {
 	Code           RuleID
+	Description    RuleDescription
+	Provider       RuleProvider
 	RequiredTypes  []string
 	RequiredLabels []string
 	CheckFunc      func(*Check, *parser.Block, *Context) []Result

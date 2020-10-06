@@ -3,19 +3,22 @@ package checks
 import (
 	"fmt"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
+	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
+	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
 
 	"github.com/zclconf/go-cty/cty"
 )
 
-// GkeLegacyAuthEnabled See https://github.com/liamg/tfsec#included-checks for check info
+// GkeLegacyAuthEnabled See https://github.com/tfsec/tfsec#included-checks for check info
 const GkeLegacyAuthEnabled scanner.RuleID = "GCP008"
+const GkeLegacyAuthEnabledDescription scanner.RuleDescription = "Legacy client authentication methods utilized."
 
 func init() {
 	scanner.RegisterCheck(scanner.Check{
 		Code:           GkeLegacyAuthEnabled,
+		Description:    GkeLegacyAuthEnabledDescription,
+		Provider:       scanner.GCPProvider,
 		RequiredTypes:  []string{"resource"},
 		RequiredLabels: []string{"google_container_cluster"},
 		CheckFunc: func(check *scanner.Check, block *parser.Block, _ *scanner.Context) []scanner.Result {

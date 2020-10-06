@@ -5,17 +5,20 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
+	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
+	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
 )
 
-// AWSUnencryptedSQSQueue See https://github.com/liamg/tfsec#included-checks for check info
+// AWSUnencryptedSQSQueue See https://github.com/tfsec/tfsec#included-checks for check info
 const AWSUnencryptedSQSQueue scanner.RuleID = "AWS015"
+const AWSUnencryptedSQSQueueDescription scanner.RuleDescription = "Unencrypted SQS queue."
 
 func init() {
 	scanner.RegisterCheck(scanner.Check{
 		Code:           AWSUnencryptedSQSQueue,
+		Description:    AWSUnencryptedSQSQueueDescription,
+		Provider:       scanner.AWSProvider,
 		RequiredTypes:  []string{"resource"},
 		RequiredLabels: []string{"aws_sqs_queue"},
 		CheckFunc: func(check *scanner.Check, block *parser.Block, context *scanner.Context) []scanner.Result {

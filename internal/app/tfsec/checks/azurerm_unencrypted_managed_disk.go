@@ -3,19 +3,22 @@ package checks
 import (
 	"fmt"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/scanner"
+	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/liamg/tfsec/internal/app/tfsec/parser"
+	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
 )
 
-// AzureUnencryptedManagedDisk See https://github.com/liamg/tfsec#included-checks for check info
+// AzureUnencryptedManagedDisk See https://github.com/tfsec/tfsec#included-checks for check info
 const AzureUnencryptedManagedDisk scanner.RuleID = "AZU003"
+const AzureUnencryptedManagedDiskDescription scanner.RuleDescription = "Unencrypted managed disk."
 
 func init() {
 	scanner.RegisterCheck(scanner.Check{
 		Code:           AzureUnencryptedManagedDisk,
+		Description:    AzureUnencryptedManagedDiskDescription,
+		Provider:       scanner.AzureProvider,
 		RequiredTypes:  []string{"resource"},
 		RequiredLabels: []string{"azurerm_managed_disk"},
 		CheckFunc: func(check *scanner.Check, block *parser.Block, _ *scanner.Context) []scanner.Result {
