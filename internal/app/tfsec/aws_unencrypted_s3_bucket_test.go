@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_AWSUnencryptedS3Bucket(t *testing.T) {
@@ -20,7 +20,7 @@ func Test_AWSUnencryptedS3Bucket(t *testing.T) {
 			name: "check no server_side_encryption_configuration aws_s3_bucket",
 			source: `
 resource "aws_s3_bucket" "my-bucket" {
-	
+
 }`,
 			mustIncludeResultCode: checks.AWSUnencryptedS3Bucket,
 		},

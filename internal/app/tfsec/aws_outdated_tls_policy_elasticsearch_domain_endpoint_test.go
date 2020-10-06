@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_AWSOutdatedTLSPolicyElasticsearchDomainEndpoint(t *testing.T) {
@@ -20,7 +20,7 @@ func Test_AWSOutdatedTLSPolicyElasticsearchDomainEndpoint(t *testing.T) {
 			name: "check no domain_endpoint_options aws_elasticsearch_domain",
 			source: `
 resource "aws_elasticsearch_domain" "my_elasticsearch_domain" {
-	
+
 }`,
 			mustExcludeResultCode: checks.AWSOutdatedTLSPolicyElasticsearchDomainEndpoint,
 		},

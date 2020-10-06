@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func TestAWSUnencryptedElasticsearchDomain(t *testing.T) {
@@ -20,7 +20,7 @@ func TestAWSUnencryptedElasticsearchDomain(t *testing.T) {
 			name: "check no encrypt_at_rest block aws_elasticsearch_domain",
 			source: `
 resource "aws_elasticsearch_domain" "my_elasticsearch_domain" {
-	
+
 }`,
 			mustIncludeResultCode: checks.AWSUnencryptedElasticsearchDomain,
 		},

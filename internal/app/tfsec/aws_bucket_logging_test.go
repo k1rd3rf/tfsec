@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_AWSBucketLogging(t *testing.T) {
@@ -20,7 +20,7 @@ func Test_AWSBucketLogging(t *testing.T) {
 			name: "check bucket with logging disabled",
 			source: `
 resource "aws_s3_bucket" "my-bucket" {
-	
+
 }`,
 			mustIncludeResultCode: checks.AWSNoBucketLogging,
 		},

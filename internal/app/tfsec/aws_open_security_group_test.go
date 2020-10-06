@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_AWSOpenSecurityGroup(t *testing.T) {
@@ -61,39 +61,39 @@ func Test_AWSOpenSecurityGroup(t *testing.T) {
 			source: `
 		variable "vpc_cidr_block" {}
 		variable "ingress_filter" { default = "ALLOW_ALL" }
-		
+
 		locals {
 		 name = "example-lb"
 		}
-		
+
 		resource "aws_security_group" "alb" {
 		 count = var.enabled ? 1 : 0
-		
+
 		 name        = "${local.name}-sg"
 		 description = "Security group for ${local.name} load balancer"
-		
+
 		 vpc_id = var.vpc_id
-		
+
 		 egress {
-		
+
 		   cidr_blocks = [
 		     "10.0.0.0/16"
 		   ]
-		
+
 		   from_port   = 0
 		   to_port     = 0
 		   protocol    = -1
 		   description = "Egress to VPC"
 		 }
-		
+
 		 dynamic "ingress" {
 		   for_each = var.ingress_filter == "ALLOW_ALL" ? [1] : []
 		   content {
-		
+
 		     cidr_blocks = [
 		       "0.0.0.0/0"
 		     ]
-		
+
 		     from_port   = 443
 		     to_port     = 443
 		     protocol    = "tcp"

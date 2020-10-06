@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/parser"
 )
 
 // Scanner scans HCL blocks by running all registered checks against them

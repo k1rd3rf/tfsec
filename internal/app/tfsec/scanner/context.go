@@ -1,6 +1,6 @@
 package scanner
 
-import "github.com/tfsec/tfsec/internal/app/tfsec/parser"
+import "github.com/k1rd3rf/tfsec/internal/app/tfsec/parser"
 
 type Context struct {
 	blocks parser.Blocks

@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_GoogleUnencryptedDisk(t *testing.T) {
@@ -20,7 +20,7 @@ func Test_GoogleUnencryptedDisk(t *testing.T) {
 			name: "check google_compute_disk with no disk_encryption_key block",
 			source: `
 resource "google_compute_disk" "my-disk" {
-	
+
 }`,
 			mustIncludeResultCode: checks.GoogleUnencryptedDisk,
 		},

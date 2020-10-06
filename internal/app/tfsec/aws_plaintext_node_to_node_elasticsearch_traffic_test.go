@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_AWSPlaintextNodeToNodeElasticsearchTraffic(t *testing.T) {
@@ -20,7 +20,7 @@ func Test_AWSPlaintextNodeToNodeElasticsearchTraffic(t *testing.T) {
 			name: "check no node_to_node_encryption block aws_elasticsearch_domain",
 			source: `
 resource "aws_elasticsearch_domain" "my_elasticsearch_domain" {
-	
+
 }`,
 			mustIncludeResultCode: checks.AWSPlaintextNodeToNodeElasticsearchTraffic,
 		},

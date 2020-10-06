@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_AWSMissingDescriptionForSecurityGroup(t *testing.T) {
@@ -20,7 +20,7 @@ func Test_AWSMissingDescriptionForSecurityGroup(t *testing.T) {
 			name: "check aws_security_group without description",
 			source: `
 resource "aws_security_group" "my-group" {
-	
+
 }`,
 			mustIncludeResultCode: checks.AWSNoDescriptionInSecurityGroup,
 		},
@@ -28,7 +28,7 @@ resource "aws_security_group" "my-group" {
 			name: "check aws_security_group_rule without description",
 			source: `
 resource "aws_security_group_rule" "my-rule" {
-	
+
 }`,
 			mustIncludeResultCode: checks.AWSNoDescriptionInSecurityGroup,
 		},

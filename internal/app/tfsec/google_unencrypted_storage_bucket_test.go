@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_GoogleUnencryptedStorageBucket(t *testing.T) {
@@ -20,7 +20,7 @@ func Test_GoogleUnencryptedStorageBucket(t *testing.T) {
 			name: "check google_storage_bucket with no encryption block",
 			source: `
 resource "google_storage_bucket" "my-bucket" {
-	
+
 }`,
 			mustIncludeResultCode: checks.GoogleUnencryptedStorageBucket,
 		},
@@ -28,7 +28,7 @@ resource "google_storage_bucket" "my-bucket" {
 			name: "check google_storage_bucket with no encryption kms key name",
 			source: `
 resource "google_storage_bucket" "my-bucket" {
-	encryption {}	
+	encryption {}
 }`,
 			mustExcludeResultCode: checks.GoogleUnencryptedStorageBucket,
 		},
@@ -38,7 +38,7 @@ resource "google_storage_bucket" "my-bucket" {
 resource "google_storage_bucket" "my-bucket" {
 	encryption {
 		default_kms_key_name = "my-key"
-	}	
+	}
 }`,
 			mustExcludeResultCode: checks.GoogleUnencryptedStorageBucket,
 		},

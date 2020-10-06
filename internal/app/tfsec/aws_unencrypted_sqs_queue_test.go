@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_AWSUnencryptedSQSQueue(t *testing.T) {
@@ -20,7 +20,7 @@ func Test_AWSUnencryptedSQSQueue(t *testing.T) {
 			name: "check no encryption key id specified for aws_sqs_queue",
 			source: `
 resource "aws_sqs_queue" "my-queue" {
-	
+
 }`,
 			mustIncludeResultCode: checks.AWSUnencryptedSQSQueue,
 		},

@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_AWSUnencryptedCloudFrontCommunications(t *testing.T) {
@@ -50,7 +50,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 	default_cache_behavior {
 		viewer_protocol_policy = "https-only"
 	}
-	
+
 	# Cache behavior with precedence 0
 	ordered_cache_behavior {
 
@@ -65,7 +65,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 	default_cache_behavior {
 		viewer_protocol_policy = "https-only"
 	}
-	
+
 	# Cache behavior with precedence 0
 	ordered_cache_behavior {
 		viewer_protocol_policy = "allow-all"

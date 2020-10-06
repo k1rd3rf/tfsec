@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_AzureUnencryptedDataLakeStore(t *testing.T) {
@@ -36,7 +36,7 @@ resource "azurerm_data_lake_store" "my-lake-store" {
 			name: "check azurerm_data_lake_store with encryption enabled by default",
 			source: `
 resource "azurerm_data_lake_store" "my-lake-store" {
-	
+
 }`,
 			mustExcludeResultCode: checks.AzureUnencryptedDataLakeStore,
 		},

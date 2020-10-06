@@ -3,11 +3,11 @@ package checks
 import (
 	"fmt"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/security"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/security"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/parser"
 	"github.com/zclconf/go-cty/cty"
 )
 

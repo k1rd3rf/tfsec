@@ -3,9 +3,9 @@ package tfsec
 import (
 	"testing"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/checks"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 )
 
 func Test_AWSUnencryptedBlockDevice(t *testing.T) {
@@ -20,7 +20,7 @@ func Test_AWSUnencryptedBlockDevice(t *testing.T) {
 			name: "check no root_block_device configured in launch configuration",
 			source: `
 resource "aws_launch_configuration" "my-launch-config" {
-	
+
 }`,
 			mustIncludeResultCode: checks.AWSLaunchConfigurationWithUnencryptedBlockDevice,
 		},

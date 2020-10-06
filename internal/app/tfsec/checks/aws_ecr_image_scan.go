@@ -5,9 +5,9 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/scanner"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
 
-	"github.com/tfsec/tfsec/internal/app/tfsec/parser"
+	"github.com/k1rd3rf/tfsec/internal/app/tfsec/parser"
 )
 
 // AWSEcrImageScanNotEnabled See https://github.com/tfsec/tfsec#included-checks for check info
