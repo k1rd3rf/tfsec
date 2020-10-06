@@ -14,7 +14,7 @@ import (
 	_ "github.com/k1rd3rf/tfsec/internal/app/tfsec/checks"
 	"github.com/k1rd3rf/tfsec/internal/app/tfsec/parser"
 	"github.com/k1rd3rf/tfsec/internal/app/tfsec/scanner"
-	"github.com/tfsec/tfsec/version"
+	"github.com/k1rd3rf/tfsec/version"
 )
 
 var showVersion = false
