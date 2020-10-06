@@ -1,4 +1,4 @@
-module github.com/k1rd3rf/tfsec
+module github.com/tfsec/tfsec
 
 go 1.14
 
@@ -12,5 +12,3 @@ require (
 	github.com/zclconf/go-cty v1.5.1
 	github.com/zclconf/go-cty-yaml v1.0.1
 )
-
-replace github.com/tfsec/tfsec => github.com/k1rd3rf/tfsec
